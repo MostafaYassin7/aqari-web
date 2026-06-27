@@ -1,0 +1,268 @@
+{
+  "nav": {
+    "home": "Home",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "about": "About Us",
+    "contact": "Contact",
+    "download": "Download App",
+    "login": "Sign In",
+    "myAds": "My Ads",
+    "favorites": "Favorites",
+    "wallet": "Wallet",
+    "chat": "Messages",
+    "logout": "Sign Out"
+  },
+  "hero": {
+    "badge": "Available on iOS & Android",
+    "title": "Saudi Arabia's #1 Real Estate Marketplace",
+    "subtitle": "Find your perfect property, connect with owners and brokers, and close deals safely and easily.",
+    "downloadIos": "Download on App Store",
+    "downloadAndroid": "Get it on Google Play",
+    "comingSoon": "Coming soon to stores"
+  },
+  "features": {
+    "title": "Everything You Need in One Platform",
+    "subtitle": "Aqora brings together all real estate tools in one easy-to-use app",
+    "search": {
+      "title": "Instant Map Search",
+      "desc": "Search near you or any neighborhood in Saudi Arabia with an interactive map and advanced filters"
+    },
+    "chat": {
+      "title": "Direct Messaging",
+      "desc": "Message owners and brokers instantly inside the app without sharing your phone number"
+    },
+    "wallet": {
+      "title": "Digital Wallet",
+      "desc": "Pay, recharge, and use your balance for promotions and subscriptions securely"
+    },
+    "promotions": {
+      "title": "Featured Listings",
+      "desc": "Boost your property visibility with Featured, Golden, or Buyers Alert promotions"
+    },
+    "crm": {
+      "title": "Broker Tools",
+      "desc": "Manage clients, deals, and reminders — everything a professional broker needs"
+    },
+    "licensed": {
+      "title": "REGA Licensed Listings",
+      "desc": "Verified listings certified by the General Real Estate Authority (Fal) for trust and safety"
+    }
+  },
+  "users": {
+    "title": "Who is Aqora For?",
+    "subtitle": "A platform serving all sides of the real estate market",
+    "owners": {
+      "title": "Property Owners",
+      "desc": "List your property for sale or rent and connect directly with interested buyers"
+    },
+    "brokers": {
+      "title": "Brokers & Agents",
+      "desc": "Manage listings and clients with professional subscriptions and CRM tools"
+    },
+    "buyers": {
+      "title": "Buyers & Renters",
+      "desc": "Find your dream home or investment property with ease"
+    },
+    "hosts": {
+      "title": "Hosts",
+      "desc": "Rent your property daily and earn additional income with booking management"
+    },
+    "developers": {
+      "title": "Property Developers",
+      "desc": "Showcase your projects and units to thousands of interested buyers"
+    }
+  },
+  "screenshots": {
+    "title": "Professional & Easy to Use",
+    "subtitle": "An elegant Arabic interface designed specifically for the Saudi market"
+  },
+  "cta": {
+    "title": "Ready to Start?",
+    "subtitle": "Join thousands of users who trust Aqora for better real estate decisions",
+    "downloadIos": "Download on App Store",
+    "downloadAndroid": "Get it on Google Play",
+    "comingSoon": "Coming Soon — Register Interest"
+  },
+  "footer": {
+    "tagline": "Saudi Arabia's #1 Real Estate Marketplace",
+    "links": "Quick Links",
+    "legal": "Legal",
+    "contact": "Contact",
+    "rights": "All rights reserved",
+    "company": "Aqora Company"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: June 2025",
+    "intro": "At Aqora, we take your privacy seriously. This policy explains how we collect, use, and protect your data.",
+    "sections": {
+      "collect": {
+        "title": "Data We Collect",
+        "items": [
+          "Phone number (for registration and verification)",
+          "Name and profile photo (optional)",
+          "Location data (for nearby search)",
+          "Property photos you upload",
+          "Usage and browsing data within the app",
+          "Device information and push notification tokens"
+        ]
+      },
+      "use": {
+        "title": "How We Use Your Data",
+        "items": [
+          "Operating the app and providing its services",
+          "Personalizing search results based on your location",
+          "Sending message notifications and alerts",
+          "Processing payments through the wallet",
+          "Improving user experience and app performance",
+          "Complying with Saudi legal requirements"
+        ]
+      },
+      "third": {
+        "title": "Third Parties",
+        "items": [
+          "Algolia — instant search engine",
+          "Google Cloud Platform — image and file storage",
+          "Google Maps — map display and locations",
+          "Firebase — push notifications",
+          "Socket.io — real-time messaging"
+        ]
+      },
+      "rights": {
+        "title": "Your Rights",
+        "items": [
+          "Request access to your personal data",
+          "Correct or update your information",
+          "Delete your account and all associated data",
+          "Withdraw consent for location data usage"
+        ]
+      },
+      "contact": {
+        "title": "Contact Us",
+        "text": "For any privacy-related inquiries, contact us at:"
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: June 2025",
+    "intro": "By using the Aqora app, you agree to these Terms of Service. Please read them carefully.",
+    "sections": {
+      "usage": {
+        "title": "App Usage",
+        "items": [
+          "You must be 18 years of age or older",
+          "Provide accurate and truthful information when registering",
+          "Keep your password and account credentials confidential",
+          "Do not share your account with any other person"
+        ]
+      },
+      "listings": {
+        "title": "Listing Rules",
+        "items": [
+          "All listings must be for real, existing properties",
+          "Fake or misleading listings are strictly prohibited",
+          "Photos must be genuine images of the listed property",
+          "Brokers must hold a valid REGA (Fal) license",
+          "Aqora reserves the right to remove any violating listing without notice"
+        ]
+      },
+      "payments": {
+        "title": "Payments & Wallet",
+        "items": [
+          "Wallet balance is non-refundable as cash",
+          "Amounts paid for promotions are non-refundable once activated",
+          "Aqora is not responsible for transactions conducted outside the platform",
+          "All payments are in Saudi Riyals (SAR)"
+        ]
+      },
+      "prohibited": {
+        "title": "Prohibited Content",
+        "items": [
+          "Offensive or inappropriate content",
+          "Fraud or misleading listings",
+          "Intellectual property violations",
+          "Any activity violating Saudi regulations"
+        ]
+      },
+      "termination": {
+        "title": "Account Termination",
+        "text": "Aqora reserves the right to suspend or terminate any account that violates these Terms or applicable Saudi regulations."
+      },
+      "law": {
+        "title": "Governing Law",
+        "text": "These Terms are governed by the laws of the Kingdom of Saudi Arabia, and Saudi courts have exclusive jurisdiction over any disputes arising hereunder."
+      }
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "mission": {
+      "title": "Our Mission",
+      "text": "We believe that finding a property should be an easy, transparent, and trustworthy experience. Aqora brings owners, brokers, and buyers together on one platform that provides everything the Saudi real estate market needs."
+    },
+    "story": {
+      "title": "Our Story",
+      "text": "Aqora was founded with the goal of transforming the real estate experience in Saudi Arabia. We are a team of developers and real estate specialists who believe in the power of technology to simplify real estate transactions and make them more transparent and efficient."
+    },
+    "values": {
+      "title": "Our Values",
+      "trust": { "title": "Trust", "desc": "We verify listings through REGA (Fal) license validation" },
+      "transparency": { "title": "Transparency", "desc": "Clear and honest information with no hidden fees" },
+      "innovation": { "title": "Innovation", "desc": "Advanced technology for a seamless search and communication experience" }
+    },
+    "contact": {
+      "title": "Get in Touch",
+      "email": "yazeed@aqora.sa"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We're here to help with any questions",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "send": "Send Message",
+      "placeholder_name": "Enter your name",
+      "placeholder_email": "Enter your email",
+      "placeholder_message": "Write your message here...",
+      "success": "Your message was sent successfully! We'll get back to you soon.",
+      "error": "An error occurred, please try again."
+    },
+    "channels": {
+      "title": "Contact Channels",
+      "email": "Email",
+      "whatsapp": "WhatsApp"
+    }
+  },
+  "deleteAccount": {
+    "title": "Delete Account",
+    "subtitle": "We're sorry to see you go. You can fully delete your account by following the steps below.",
+    "steps": {
+      "title": "How to Request Account Deletion",
+      "items": [
+        "Open the Aqora app and go to Settings",
+        "Select \"My Account\" then \"Delete Account\"",
+        "Confirm the deletion request inside the app"
+      ]
+    },
+    "alternative": {
+      "title": "Or Contact Us Directly",
+      "text": "If you can't access the app, send a deletion request to:"
+    },
+    "deleted": {
+      "title": "What Gets Deleted?",
+      "items": [
+        "Your personal data (name, phone number, photo)",
+        "All your property listings",
+        "Chat history and messages",
+        "Wallet balance (non-refundable)",
+        "All data stored on our servers"
+      ]
+    },
+    "note": "Deletion is processed within 30 days of the request in accordance with our data retention policy.",
+    "email": "yazeed@aqora.sa"
+  }
+}
