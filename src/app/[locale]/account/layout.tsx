@@ -5,7 +5,7 @@ import { Link, usePathname } from '@/i18n/navigation';
 import {
   FileText, Heart, Wallet, MessageCircle, Plus, UserCircle,
 } from 'lucide-react';
-
+//sss
 const NAV_ITEMS = [
   { href: '/account/my-ads',      label: 'إعلاناتي',     icon: FileText },
   { href: '/account/favorites',   label: 'المفضلة',       icon: Heart },
