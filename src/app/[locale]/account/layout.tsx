@@ -3,13 +3,14 @@ import { AuthGuard } from '@/components/auth/AuthGuard';
 import Navbar from '@/components/Navbar';
 import { Link, usePathname } from '@/i18n/navigation';
 import {
-  FileText, Heart, Wallet, MessageCircle, Plus, UserCircle,
+  FileText, Heart, Wallet, MessageCircle, Plus, UserCircle, Calendar,
 } from 'lucide-react';
 //sss
 const NAV_ITEMS = [
   { href: '/account/my-ads',      label: 'إعلاناتي',     icon: FileText },
   { href: '/account/favorites',   label: 'المفضلة',       icon: Heart },
   { href: '/account/wallet',      label: 'المحفظة',       icon: Wallet },
+  { href: '/account/bookings',    label: 'حجوزاتي',       icon: Calendar },
   { href: '/account/chat',        label: 'المحادثات',     icon: MessageCircle },
   { href: '/account/profile',     label: 'حسابي',         icon: UserCircle },
 ];

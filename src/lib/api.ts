@@ -64,6 +64,8 @@ function mapHit(hit: any): Listing {
     adNumber: hit.adNumber,
     pricePerMeter: hit.pricePerMeter ? String(hit.pricePerMeter) : undefined,
     createdAt: hit.createdAt ? new Date(hit.createdAt * 1000).toISOString() : undefined,
+    maxGuests: hit.maxGuests,
+    pricePerHalfDay: hit.pricePerHalfDay != null ? String(hit.pricePerHalfDay) : undefined,
     lat: hit._geoloc?.lat,
     lng: hit._geoloc?.lng,
     owner: {
@@ -378,5 +380,111 @@ export async function validateHostLicense(tourismLicenseNumber: string) {
     '/property-advertisement-licenses/validate-host',
     { method: 'POST', body: JSON.stringify({ tourismLicenseNumber }) },
     true
+  );
+}
+
+export async function getListingCalendar(
+  listingId: string,
+  year: number,
+  month: number,
+): Promise<{
+  blockedDates: { date: string; timeSlot: string | null }[];
+}> {
+  return apiRequest<{
+    blockedDates: { date: string; timeSlot: string | null }[];
+  }>(`/listings/${listingId}/calendar?year=${year}&month=${month}`);
+}
+
+export async function checkAvailability(
+  listingId: string,
+  params: {
+    checkInDate: string;
+    checkOutDate: string;
+  },
+): Promise<{
+  isAvailable: boolean;
+  blockedDates?: string[];
+}> {
+  return apiRequest<{
+    isAvailable: boolean;
+    blockedDates?: string[];
+  }>(
+    `/bookings/check-availability/${listingId}`,
+    { method: 'POST', body: JSON.stringify(params) },
+  );
+}
+
+export async function createBooking(params: {
+  listingId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  guestCount?: number;
+  notes?: string;
+}) {
+  return apiRequest<{
+    id: string;
+    status: string;
+    totalPrice: string;
+    nights: number;
+  }>(
+    '/bookings',
+    { method: 'POST', body: JSON.stringify(params) },
+    true,
+  );
+}
+
+export async function getMyBookingsAsGuest(
+  page = 1, limit = 20,
+) {
+  return apiRequest<{
+    data: any[];
+    total: number;
+    pages: number;
+  }>(
+    `/bookings/my/guest?page=${page}&limit=${limit}`,
+    {}, true,
+  );
+}
+
+export async function getMyBookingsAsOwner(
+  page = 1, limit = 20,
+) {
+  return apiRequest<{
+    data: any[];
+    total: number;
+    pages: number;
+  }>(
+    `/bookings/my/owner?page=${page}&limit=${limit}`,
+    {}, true,
+  );
+}
+
+export async function confirmBooking(bookingId: string) {
+  return apiRequest<{ status: string }>(
+    `/bookings/${bookingId}/confirm`,
+    { method: 'PATCH' },
+    true,
+  );
+}
+
+export async function declineBooking(
+  bookingId: string,
+  reason?: string,
+) {
+  return apiRequest<{ status: string }>(
+    `/bookings/${bookingId}/decline`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({ reason }),
+    },
+    true,
+  );
+}
+
+export async function cancelBooking(bookingId: string) {
+  return apiRequest<{ status: string }>(
+    `/bookings/${bookingId}/cancel`,
+    { method: 'PATCH' },
+    true,
   );
 }

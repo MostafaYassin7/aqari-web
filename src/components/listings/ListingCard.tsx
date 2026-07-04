@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLocale } from "next-intl";
-import { Bed, Bath, Maximize2, Heart, Building2, Clock } from "lucide-react";
+import { Bed, Bath, Maximize2, Heart, Building2, Clock, Users } from "lucide-react";
 import { useState } from "react";
 import type { Listing } from "@/types/listing";
 import { formatPrice, formatListingType, formatAdNumber, timeAgo } from "@/lib/format";
@@ -20,14 +20,17 @@ const TYPE_STYLE: Record<string, string> = {
 interface Props {
   listing: Listing;
   showFavorite?: boolean;
+  hrefBase?: string;
 }
 
-export default function ListingCard({ listing, showFavorite = true }: Props) {
+export default function ListingCard({ listing, showFavorite = true, hrefBase = "/listings" }: Props) {
   const locale = useLocale();
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
   const [favorited, setFavorited] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
+  const isEventHall = listing.propertyType === "event_hall";
+  const resolvedHrefBase = isEventHall ? "/event-halls" : hrefBase;
 
   function cacheListing() {
     try { sessionStorage.setItem(`listing_${listing.id}`, JSON.stringify(listing)); } catch {}
@@ -36,7 +39,7 @@ export default function ListingCard({ listing, showFavorite = true }: Props) {
   async function handleFavorite(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    if (!isLoggedIn) { router.push(`/login?redirect=/listings/${listing.id}`); return; }
+    if (!isLoggedIn) { router.push(`/login?redirect=${resolvedHrefBase}/${listing.id}`); return; }
     if (favLoading) return;
     setFavLoading(true);
     try {
@@ -50,7 +53,7 @@ export default function ListingCard({ listing, showFavorite = true }: Props) {
   return (
     <Link
       onClick={cacheListing}
-      href={`/${locale}/listings/${listing.id}`}
+      href={`/${locale}${resolvedHrefBase}/${listing.id}`}
       className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col"
     >
       {/* Photo */}
@@ -112,28 +115,52 @@ export default function ListingCard({ listing, showFavorite = true }: Props) {
 
         {/* Price + listing type */}
         <div className="flex items-center justify-between gap-2 mt-1">
-          <p className="text-base font-black text-[#222222]">{formatPrice(listing.price)}</p>
+          {isEventHall ? (
+            <div>
+              <p className="text-base font-black text-[#222222]">
+                {parseFloat(listing.price).toLocaleString()} ريال{" "}
+                <span className="text-xs font-normal text-gray-400">/ يوم</span>
+              </p>
+              {listing.pricePerHalfDay && (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  ({parseFloat(listing.pricePerHalfDay).toLocaleString()} ريال / فترة)
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className="text-base font-black text-[#222222]">{formatPrice(listing.price)}</p>
+          )}
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${typeStyle}`}>
             {formatListingType(listing.listingType)}
           </span>
         </div>
 
         {/* Specs */}
-        {(listing.area || listing.bedrooms || listing.bathrooms) && (
-          <div className="flex items-center gap-3 text-xs text-[#717171] mt-0.5">
-            {listing.area && (
+        {isEventHall ? (
+          listing.maxGuests && (
+            <div className="flex items-center gap-3 text-xs text-[#717171] mt-0.5">
               <span className="flex items-center gap-1">
-                <Maximize2 size={11} />
-                {typeof listing.area === "number" ? listing.area : parseFloat(String(listing.area))} م²
+                <Users size={11} /> يتسع لـ {listing.maxGuests} ضيف
               </span>
-            )}
-            {listing.bedrooms !== undefined && listing.bedrooms !== null && listing.bedrooms > 0 && (
-              <span className="flex items-center gap-1"><Bed size={11} /> {listing.bedrooms}</span>
-            )}
-            {listing.bathrooms !== undefined && listing.bathrooms !== null && listing.bathrooms > 0 && (
-              <span className="flex items-center gap-1"><Bath size={11} /> {listing.bathrooms}</span>
-            )}
-          </div>
+            </div>
+          )
+        ) : (
+          (listing.area || listing.bedrooms || listing.bathrooms) && (
+            <div className="flex items-center gap-3 text-xs text-[#717171] mt-0.5">
+              {listing.area && (
+                <span className="flex items-center gap-1">
+                  <Maximize2 size={11} />
+                  {typeof listing.area === "number" ? listing.area : parseFloat(String(listing.area))} م²
+                </span>
+              )}
+              {listing.bedrooms !== undefined && listing.bedrooms !== null && listing.bedrooms > 0 && (
+                <span className="flex items-center gap-1"><Bed size={11} /> {listing.bedrooms}</span>
+              )}
+              {listing.bathrooms !== undefined && listing.bathrooms !== null && listing.bathrooms > 0 && (
+                <span className="flex items-center gap-1"><Bath size={11} /> {listing.bathrooms}</span>
+              )}
+            </div>
+          )
         )}
 
         {/* Footer: ad number + timestamp */}

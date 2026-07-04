@@ -11,6 +11,7 @@ const navLinks = [
   { key: "home", href: "/" },
   { href: "/listings", label: "العقارات" },
   { href: "/daily-rents", label: "الإيجار اليومي" },
+  { href: "/event-halls", label: "قاعات المناسبات" },
   { key: "about", href: "/about" },
   { key: "contact", href: "/contact" },
 ];
@@ -133,6 +134,13 @@ export default function Navbar() {
                     المحفظة
                   </Link>
                   <Link
+                    href="/account/bookings"
+                    className="block px-4 py-2.5 text-sm text-[#222222] hover:bg-gray-50 transition-colors"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    حجوزاتي
+                  </Link>
+                  <Link
                     href="/account/chat"
                     className="block px-4 py-2.5 text-sm text-[#222222] hover:bg-gray-50 transition-colors"
                     onClick={() => setDropdownOpen(false)}
@@ -202,6 +210,7 @@ export default function Navbar() {
               <Link href="/account/my-ads" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>إعلاناتي</Link>
               <Link href="/account/favorites" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>المفضلة</Link>
               <Link href="/account/wallet" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>المحفظة</Link>
+              <Link href="/account/bookings" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>حجوزاتي</Link>
               <Link href="/account/chat" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>المحادثات</Link>
               <Link href="/account/profile" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>حسابي</Link>
               <button onClick={() => { handleLogout(); setOpen(false); }} className="text-right text-base text-red-500 font-medium py-1">تسجيل الخروج</button>

@@ -13,7 +13,7 @@ export default function DailyRentsPage() {
             <p className="text-sm text-[#717171] mt-1">استأجر عقارك بشكل يومي</p>
           </div>
         </div>
-        <ListingsClient forcedListingType="rent_short" hideListingType={true} />
+        <ListingsClient forcedListingType="rent_short" hideListingType={true} hrefBase="/daily-rents" />
       </main>
       <Footer />
     </>

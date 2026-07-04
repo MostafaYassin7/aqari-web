@@ -12,6 +12,7 @@ import { formatPrice, formatListingType, formatAdNumber, timeAgo } from "@/lib/f
 import { apiRequest, toggleFavorite, getSimilarListings, startChat } from "@/lib/api";
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "@/i18n/navigation";
+import BookingPanel from "@/components/booking/BookingPanel";
 import {
   Bed, Bath, Home, Maximize2, MapPin, Star,
   MessageCircle, AlertCircle, Heart, Eye, Users, Bookmark,
@@ -130,6 +131,10 @@ export default function ListingDetailClient({ id }: { id: string }) {
           stats: data.stats,
           latitude: data.latitude,
           longitude: data.longitude,
+          maxGuests: data.maxGuests,
+          minNights: data.minNights,
+          checkInTime: data.checkInTime,
+          checkOutTime: data.checkOutTime,
         };
         setListing(mapped);
       } catch {
@@ -216,6 +221,14 @@ export default function ListingDetailClient({ id }: { id: string }) {
   const ownerRole = listing.__owner__?.role;
   const stats = listing.stats;
   const typeStyle = TYPE_STYLE[listing.listingType] ?? "bg-gray-50 text-gray-600 border border-gray-100";
+  const isDailyRental = listing.listingType === "rent_short" && listing.propertyType !== "event_hall";
+  const bookingListing = {
+    ...listing,
+    totalPrice: listing.price,
+    __owner__: listing.__owner__
+      ? { ...listing.__owner__, id: listing.owner?.id }
+      : undefined,
+  };
 
   // ── Contact buttons (reused in sidebar + mobile bar) ──────────────────────
   const contactButtons = (size: "sm" | "lg" = "lg") => (
@@ -486,99 +499,107 @@ export default function ListingDetailClient({ id }: { id: string }) {
             </div>
 
             {/* ── Sticky sidebar (desktop only) ───────────────────────────── */}
-            <div className="hidden lg:block">
-              <div className="sticky top-24 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
+            {isDailyRental ? (
+              <div className="lg:sticky lg:top-24">
+                <BookingPanel listing={bookingListing} onBookingSuccess={() => {}} />
+              </div>
+            ) : (
+              <div className="hidden lg:block">
+                <div className="sticky top-24 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
 
-                {/* Price section */}
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-2xl font-black text-[#222222] leading-tight">{formatPrice(listing.price)}</p>
-                      {listing.pricePerMeter && (
-                        <p className="text-xs text-[#717171] mt-1">{formatPrice(listing.pricePerMeter)} / م²</p>
-                      )}
+                  {/* Price section */}
+                  <div className="p-6 border-b border-gray-100">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-2xl font-black text-[#222222] leading-tight">{formatPrice(listing.price)}</p>
+                        {listing.pricePerMeter && (
+                          <p className="text-xs text-[#717171] mt-1">{formatPrice(listing.pricePerMeter)} / م²</p>
+                        )}
+                      </div>
+                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${typeStyle}`}>
+                        {formatListingType(listing.listingType)}
+                      </span>
                     </div>
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${typeStyle}`}>
-                      {formatListingType(listing.listingType)}
-                    </span>
+
+                    {/* Quick specs strip */}
+                    {(listing.area || listing.bedrooms !== undefined || listing.bathrooms !== undefined) && (
+                      <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-sm text-[#717171]">
+                        {listing.area && (
+                          <span className="flex items-center gap-1.5">
+                            <Maximize2 size={14} className="text-[#F5A623]" /> {listing.area} م²
+                          </span>
+                        )}
+                        {listing.bedrooms !== undefined && (
+                          <span className="flex items-center gap-1.5">
+                            <Bed size={14} className="text-[#F5A623]" /> {listing.bedrooms}
+                          </span>
+                        )}
+                        {listing.bathrooms !== undefined && (
+                          <span className="flex items-center gap-1.5">
+                            <Bath size={14} className="text-[#F5A623]" /> {listing.bathrooms}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Quick specs strip */}
-                  {(listing.area || listing.bedrooms !== undefined || listing.bathrooms !== undefined) && (
-                    <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-sm text-[#717171]">
-                      {listing.area && (
-                        <span className="flex items-center gap-1.5">
-                          <Maximize2 size={14} className="text-[#F5A623]" /> {listing.area} م²
-                        </span>
-                      )}
-                      {listing.bedrooms !== undefined && (
-                        <span className="flex items-center gap-1.5">
-                          <Bed size={14} className="text-[#F5A623]" /> {listing.bedrooms}
-                        </span>
-                      )}
-                      {listing.bathrooms !== undefined && (
-                        <span className="flex items-center gap-1.5">
-                          <Bath size={14} className="text-[#F5A623]" /> {listing.bathrooms}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
+                  {/* Contact buttons */}
+                  <div className="p-6 space-y-3">
+                    {contactButtons("lg")}
+                  </div>
 
-                {/* Contact buttons */}
-                <div className="p-6 space-y-3">
-                  {contactButtons("lg")}
-                </div>
+                  {/* Ad meta */}
+                  <div className="px-6 pb-5 pt-0 flex items-center justify-between text-xs text-gray-400">
+                    {listing.adNumber && <span>{formatAdNumber(listing.adNumber)}</span>}
+                    {listing.createdAt && (
+                      <span className="flex items-center gap-1">
+                        <Clock size={11} /> {timeAgo(listing.createdAt)}
+                      </span>
+                    )}
+                  </div>
 
-                {/* Ad meta */}
-                <div className="px-6 pb-5 pt-0 flex items-center justify-between text-xs text-gray-400">
-                  {listing.adNumber && <span>{formatAdNumber(listing.adNumber)}</span>}
-                  {listing.createdAt && (
-                    <span className="flex items-center gap-1">
-                      <Clock size={11} /> {timeAgo(listing.createdAt)}
-                    </span>
-                  )}
-                </div>
-
-                {/* Share */}
-                <div className="px-6 pb-6">
-                  <button
-                    onClick={handleShare}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl text-sm text-[#717171] hover:border-gray-300 hover:text-[#222222] transition-colors"
-                  >
-                    {copied ? <><Check size={15} className="text-green-500" /> تم النسخ</> : <><Share2 size={15} /> مشاركة الإعلان</>}
-                  </button>
+                  {/* Share */}
+                  <div className="px-6 pb-6">
+                    <button
+                      onClick={handleShare}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl text-sm text-[#717171] hover:border-gray-300 hover:text-[#222222] transition-colors"
+                    >
+                      {copied ? <><Check size={15} className="text-green-500" /> تم النسخ</> : <><Share2 size={15} /> مشاركة الإعلان</>}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
           </div>
         </div>
       </main>
 
       {/* Mobile sticky contact bar */}
-      <div className="fixed bottom-0 start-0 end-0 z-40 bg-white border-t border-gray-100 shadow-lg px-4 py-3 lg:hidden">
-        <div className="flex gap-2 max-w-lg mx-auto">
-          {ownerPhone && (
-            <a
-              href={`https://wa.me/${ownerPhone.replace(/\D/g, "")}`}
-              target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-3 rounded-xl text-sm transition-colors"
+      {!isDailyRental && (
+        <div className="fixed bottom-0 start-0 end-0 z-40 bg-white border-t border-gray-100 shadow-lg px-4 py-3 lg:hidden">
+          <div className="flex gap-2 max-w-lg mx-auto">
+            {ownerPhone && (
+              <a
+                href={`https://wa.me/${ownerPhone.replace(/\D/g, "")}`}
+                target="_blank" rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-3 rounded-xl text-sm transition-colors"
+              >
+                <WhatsAppIcon size={16} /> واتساب
+              </a>
+            )}
+            <button
+              onClick={handleChat}
+              disabled={chatLoading}
+              className="flex-1 flex items-center justify-center gap-1.5 bg-[#F5A623] hover:bg-[#E09400] disabled:opacity-60 text-white font-bold py-3 rounded-xl text-sm transition-colors"
             >
-              <WhatsAppIcon size={16} /> واتساب
-            </a>
-          )}
-          <button
-            onClick={handleChat}
-            disabled={chatLoading}
-            className="flex-1 flex items-center justify-center gap-1.5 bg-[#F5A623] hover:bg-[#E09400] disabled:opacity-60 text-white font-bold py-3 rounded-xl text-sm transition-colors"
-          >
-            {chatLoading
-              ? <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-              : <><MessageCircle size={16} /> تواصل</>}
-          </button>
+              {chatLoading
+                ? <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                : <><MessageCircle size={16} /> تواصل</>}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
