@@ -278,7 +278,14 @@ export async function submitLicense(data: Record<string, unknown>) {
 }
 
 export async function getWallet() {
-  return apiRequest<{ id: string; userId: string; balance: string; currency: string }>(
+  return apiRequest<{
+    id: string;
+    userId: string;
+    balance: string;
+    heldBalance?: string;
+    pendingEarnings?: string;
+    currency: string;
+  }>(
     '/wallet',
     {},
     true

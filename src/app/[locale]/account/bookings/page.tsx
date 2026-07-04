@@ -84,7 +84,7 @@ export default function BookingsPage() {
   function handleConfirmBooking(id: string) {
     askConfirm(
       'تأكيد الحجز',
-      'هل تريد تأكيد هذا الحجز؟ سيتم إشعار الضيف وحجب التواريخ.',
+      'هل تريد تأكيد هذا الحجز؟ سيتم حجز مبلغ الحجز من محفظة الضيف الآن، وتحويله لمحفظتك بعد 7 أيام من انتهاء الحجز.',
       async () => {
         setConfirmState((c) => ({ ...c, open: false }));
         setActionLoading(id);

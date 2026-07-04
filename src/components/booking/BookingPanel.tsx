@@ -84,9 +84,9 @@ export default function BookingPanel({ listing, onBookingSuccess }: Props) {
         <p className="text-sm text-gray-500 leading-relaxed mb-6">
           سيتم إشعارك عند تأكيد المضيف.
           <br />
-          بعد التأكيد تواصل معه عبر المحادثة
+          عند التأكيد سيتم حجز مبلغ الحجز
           <br />
-          لترتيب تفاصيل الدفع.
+          من رصيد محفظتك.
         </p>
         <div className="flex flex-col gap-3">
           <button
@@ -165,9 +165,9 @@ export default function BookingPanel({ listing, onBookingSuccess }: Props) {
       </button>
 
       <p className="text-xs text-gray-400 text-center mt-3 leading-relaxed">
-        لا يتم الدفع الآن — ستتواصل مع المضيف
+        لا يتم الدفع الآن — سيتم حجز المبلغ
         <br />
-        عبر المحادثة بعد تأكيد الحجز
+        من محفظتك عند تأكيد المضيف
       </p>
     </>
   );
@@ -274,9 +274,9 @@ export default function BookingPanel({ listing, onBookingSuccess }: Props) {
             </div>
 
             <div className="bg-[#FFF8EC] border border-[#F5A623] rounded-xl p-3 text-xs text-[#222222] leading-relaxed">
-              الدفع يتم بالاتفاق مع المضيف عبر المحادثة
+              سيتم حجز مبلغ الحجز من محفظتك
               <br />
-              بعد تأكيد الحجز
+              فقط بعد تأكيد المضيف للطلب
             </div>
 
             {errorMessage && <p className="text-sm text-red-500 mt-2">{errorMessage}</p>}

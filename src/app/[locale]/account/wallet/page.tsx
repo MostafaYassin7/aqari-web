@@ -47,6 +47,8 @@ function formatDate(str: string) {
 export default function WalletPage() {
   const searchParams = useSearchParams();
   const [balance, setBalance] = useState<number | null>(null);
+  const [heldBalance, setHeldBalance] = useState<number>(0);
+  const [pendingEarnings, setPendingEarnings] = useState<number>(0);
   const [currency, setCurrency] = useState('SAR');
   const [walletLoading, setWalletLoading] = useState(true);
   const [txs, setTxs] = useState<Tx[]>([]);
@@ -98,6 +100,8 @@ export default function WalletPage() {
     try {
       const w = await getWallet();
       setBalance(parseFloat(w.balance));
+      setHeldBalance(parseFloat(w.heldBalance ?? '0'));
+      setPendingEarnings(parseFloat(w.pendingEarnings ?? '0'));
       setCurrency(w.currency);
     } catch { /* ignore */ } finally { setWalletLoading(false); }
   }, []);
@@ -219,6 +223,27 @@ export default function WalletPage() {
         }
         <p className="text-sm font-medium opacity-70 mt-1">{currency === 'SAR' ? 'ريال سعودي' : currency}</p>
       </div>
+
+      {(heldBalance > 0 || pendingEarnings > 0) && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {heldBalance > 0 && (
+            <div className="bg-white rounded-xl border border-gray-100 px-4 py-3 shadow-sm">
+              <p className="text-xs font-medium text-[#717171] mb-1">محجوز للحجوزات</p>
+              <p className="text-lg font-black text-[#222222]">
+                {heldBalance.toLocaleString('ar-SA', { minimumFractionDigits: 2 })} ريال
+              </p>
+            </div>
+          )}
+          {pendingEarnings > 0 && (
+            <div className="bg-white rounded-xl border border-gray-100 px-4 py-3 shadow-sm">
+              <p className="text-xs font-medium text-[#717171] mb-1">أرباح حجوزات قيد الانتظار</p>
+              <p className="text-lg font-black text-[#222222]">
+                {pendingEarnings.toLocaleString('ar-SA', { minimumFractionDigits: 2 })} ريال
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Top-up button */}
       <button
