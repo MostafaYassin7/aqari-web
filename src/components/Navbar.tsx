@@ -3,17 +3,42 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, usePathname, Link } from "@/i18n/navigation";
-import { Menu, X, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  Home,
+  Building2,
+  CalendarDays,
+  PartyPopper,
+  Info,
+  Phone,
+  LayoutDashboard,
+  Heart,
+  Wallet,
+  MessageCircle,
+  UserCircle,
+  LogOut,
+} from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import Image from "next/image";
 
 const navLinks = [
-  { key: "home", href: "/" },
-  { href: "/listings", label: "العقارات" },
-  { href: "/daily-rents", label: "الإيجار اليومي" },
-  { href: "/event-halls", label: "قاعات المناسبات" },
-  { key: "about", href: "/about" },
-  { key: "contact", href: "/contact" },
+  { key: "home", href: "/", icon: Home, kind: "secondary" },
+  { key: "listings", href: "/listings", icon: Building2, kind: "primary" },
+  { key: "dailyRents", href: "/daily-rents", icon: CalendarDays, kind: "primary" },
+  { key: "eventHalls", href: "/event-halls", icon: PartyPopper, kind: "primary" },
+  { key: "about", href: "/about", icon: Info, kind: "secondary" },
+  { key: "contact", href: "/contact", icon: Phone, kind: "secondary" },
+];
+
+const accountLinks = [
+  { key: "myAds", href: "/account/my-ads", icon: LayoutDashboard },
+  { key: "favorites", href: "/account/favorites", icon: Heart },
+  { key: "wallet", href: "/account/wallet", icon: Wallet },
+  { key: "bookings", href: "/account/bookings", icon: CalendarDays },
+  { key: "chat", href: "/account/chat", icon: MessageCircle },
+  { key: "profile", href: "/account/profile", icon: UserCircle },
 ];
 
 export default function Navbar() {
@@ -26,6 +51,15 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { isLoggedIn, user, logout } = useAuthStore();
+
+  function isActive(href: string) {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  function labelFor(link: (typeof navLinks)[number]) {
+    return t(link.key as Parameters<typeof t>[0]);
+  }
 
   function toggleLocale() {
     router.replace(pathname, { locale: locale === "ar" ? "en" : "ar" });
@@ -48,6 +82,11 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  useEffect(() => {
+    setOpen(false);
+    setDropdownOpen(false);
+  }, [pathname]);
 
   const avatarContent = user?.profilePhoto ? (
     <Image
@@ -77,17 +116,29 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden lg:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="text-sm text-gray-600 hover:text-[#F5A623] transition-colors font-medium"
-              >
-                {"label" in link ? link.label : t(link.key as Parameters<typeof t>[0])}
-              </Link>
-            </li>
-          ))}
+        <ul className="hidden lg:flex items-center gap-1 rounded-full border border-gray-100 bg-gray-50/70 p-1">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const active = isActive(link.href);
+            return (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-semibold transition-all ${
+                    active
+                      ? "bg-white text-[#F5A623] shadow-sm ring-1 ring-[#F5A623]/20"
+                      : link.kind === "primary"
+                        ? "text-[#222222] hover:bg-white hover:text-[#F5A623]"
+                        : "text-gray-500 hover:bg-white hover:text-[#222222]"
+                  }`}
+                >
+                  <Icon size={15} strokeWidth={active ? 2.4 : 2} />
+                  <span>{labelFor(link)}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
         {/* Right actions */}
@@ -104,62 +155,57 @@ export default function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen((v) => !v)}
-                className="flex items-center gap-1.5 rounded-full hover:ring-2 hover:ring-[#F5A623]/40 transition-all"
+                className={`flex items-center gap-1.5 rounded-full px-1 py-0.5 transition-all ${
+                  pathname.startsWith("/account")
+                    ? "ring-2 ring-[#F5A623]/35"
+                    : "hover:ring-2 hover:ring-[#F5A623]/30"
+                }`}
+                aria-expanded={dropdownOpen}
               >
                 {avatarContent}
                 <ChevronDown size={14} className="text-gray-500 hidden sm:block" />
               </button>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50" dir="rtl">
-                  <Link
-                    href="/account/my-ads"
-                    className="block px-4 py-2.5 text-sm text-[#222222] hover:bg-gray-50 transition-colors"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    إعلاناتي
-                  </Link>
-                  <Link
-                    href="/account/favorites"
-                    className="block px-4 py-2.5 text-sm text-[#222222] hover:bg-gray-50 transition-colors"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    المفضلة
-                  </Link>
-                  <Link
-                    href="/account/wallet"
-                    className="block px-4 py-2.5 text-sm text-[#222222] hover:bg-gray-50 transition-colors"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    المحفظة
-                  </Link>
-                  <Link
-                    href="/account/bookings"
-                    className="block px-4 py-2.5 text-sm text-[#222222] hover:bg-gray-50 transition-colors"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    حجوزاتي
-                  </Link>
-                  <Link
-                    href="/account/chat"
-                    className="block px-4 py-2.5 text-sm text-[#222222] hover:bg-gray-50 transition-colors"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    المحادثات
-                  </Link>
-                  <Link
-                    href="/account/profile"
-                    className="block px-4 py-2.5 text-sm text-[#222222] hover:bg-gray-50 transition-colors"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    حسابي
-                  </Link>
+                <div
+                  className={`absolute mt-2 w-64 max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-50 ${
+                    locale === "ar" ? "left-0" : "right-0"
+                  }`}
+                  dir={locale === "ar" ? "rtl" : "ltr"}
+                >
+                  <div className="flex items-center gap-3 px-3 py-3 border-b border-gray-100 mb-1">
+                    {avatarContent}
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-[#222222] truncate">{user?.name ?? t("account")}</p>
+                      <p className="text-xs text-[#717171] truncate">{user?.phone ?? user?.email ?? t("dashboard")}</p>
+                    </div>
+                  </div>
+                  {accountLinks.map((link) => {
+                    const Icon = link.icon;
+                    const active = isActive(link.href);
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                          active
+                            ? "bg-[#FFF8EC] text-[#F5A623]"
+                            : "text-[#222222] hover:bg-gray-50"
+                        }`}
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <Icon size={17} />
+                        {t(link.key as Parameters<typeof t>[0])}
+                      </Link>
+                    );
+                  })}
                   <hr className="my-1 border-gray-100" />
                   <button
                     onClick={handleLogout}
-                    className="w-full text-right px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
                   >
-                    تسجيل الخروج
+                    <LogOut size={17} />
+                    {t("logout")}
                   </button>
                 </div>
               )}
@@ -170,7 +216,7 @@ export default function Navbar() {
                 href="/login"
                 className="text-sm px-4 py-2 rounded-full border border-[#F5A623] text-[#F5A623] hover:bg-orange-50 transition-all font-medium"
               >
-                تسجيل الدخول
+                {t("login")}
               </Link>
               <a
                 href="#download"
@@ -194,32 +240,61 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-3">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1"
-              onClick={() => setOpen(false)}
-            >
-              {"label" in link ? link.label : t(link.key as Parameters<typeof t>[0])}
-            </Link>
-          ))}
+        <div className="lg:hidden border-t border-gray-100 bg-white px-4 py-4">
+          <div className="grid grid-cols-2 gap-2">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-3 text-sm font-bold transition-colors ${
+                    active
+                      ? "border-[#F5A623] bg-[#FFF8EC] text-[#F5A623]"
+                      : "border-gray-100 text-gray-700 hover:border-[#F5A623]/40"
+                  }`}
+                  onClick={() => setOpen(false)}
+                >
+                  <Icon size={17} />
+                  {labelFor(link)}
+                </Link>
+              );
+            })}
+          </div>
           {isLoggedIn ? (
-            <>
-              <Link href="/account/my-ads" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>إعلاناتي</Link>
-              <Link href="/account/favorites" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>المفضلة</Link>
-              <Link href="/account/wallet" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>المحفظة</Link>
-              <Link href="/account/bookings" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>حجوزاتي</Link>
-              <Link href="/account/chat" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>المحادثات</Link>
-              <Link href="/account/profile" className="text-base text-gray-700 hover:text-[#F5A623] font-medium py-1" onClick={() => setOpen(false)}>حسابي</Link>
-              <button onClick={() => { handleLogout(); setOpen(false); }} className="text-right text-base text-red-500 font-medium py-1">تسجيل الخروج</button>
-            </>
+            <div className="mt-4 border-t border-gray-100 pt-4">
+              <p className="px-1 pb-2 text-xs font-bold text-[#717171]">{t("account")}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {accountLinks.map((link) => {
+                  const Icon = link.icon;
+                  const active = isActive(link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium ${
+                        active ? "bg-[#FFF8EC] text-[#F5A623]" : "bg-gray-50 text-gray-700"
+                      }`}
+                      onClick={() => setOpen(false)}
+                    >
+                      <Icon size={16} />
+                      {t(link.key as Parameters<typeof t>[0])}
+                    </Link>
+                  );
+                })}
+              </div>
+              <button onClick={() => { handleLogout(); setOpen(false); }} className="mt-2 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 bg-red-50">
+                <LogOut size={16} />
+                {t("logout")}
+              </button>
+            </div>
           ) : (
-            <>
-              <Link href="/login" className="text-base text-[#F5A623] font-semibold py-1" onClick={() => setOpen(false)}>تسجيل الدخول</Link>
-              <a href="#download" className="mt-2 inline-flex justify-center bg-[#F5A623] hover:bg-[#E09400] text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors" onClick={() => setOpen(false)}>{t("download")}</a>
-            </>
+            <div className="mt-4 grid gap-2 border-t border-gray-100 pt-4">
+              <Link href="/login" className="flex justify-center rounded-xl border border-[#F5A623] px-4 py-2.5 text-sm font-bold text-[#F5A623]" onClick={() => setOpen(false)}>{t("login")}</Link>
+              <a href="#download" className="inline-flex justify-center bg-[#F5A623] hover:bg-[#E09400] text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors" onClick={() => setOpen(false)}>{t("download")}</a>
+            </div>
           )}
         </div>
       )}

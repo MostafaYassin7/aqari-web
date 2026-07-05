@@ -1,6 +1,6 @@
 import type { Listing, SearchResponse } from '@/types/listing';
 
-const BASE_URL = 'https://api.aqora.sa/api/v1';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.aqora.sa/api/v1';
 
 function getToken(): string | null {
   try {

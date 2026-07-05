@@ -1,6 +1,9 @@
 {
   "nav": {
     "home": "الرئيسية",
+    "listings": "العقارات",
+    "dailyRents": "الإيجار اليومي",
+    "eventHalls": "قاعات المناسبات",
     "privacy": "سياسة الخصوصية",
     "terms": "الشروط والأحكام",
     "about": "من نحن",
@@ -10,7 +13,13 @@
     "myAds": "إعلاناتي",
     "favorites": "المفضلة",
     "wallet": "المحفظة",
+    "bookings": "حجوزاتي",
     "chat": "المحادثات",
+    "profile": "حسابي",
+    "account": "حسابي",
+    "dashboard": "لوحة التحكم",
+    "addListing": "إضافة إعلان",
+    "add": "إضافة",
     "logout": "تسجيل الخروج"
   },
   "hero": {
@@ -76,6 +85,53 @@
   "screenshots": {
     "title": "تصميم احترافي وسهل الاستخدام",
     "subtitle": "واجهة عربية أنيقة مصممة خصيصاً للسوق السعودي"
+  },
+  "searchFilters": {
+    "searchPlaceholder": "ابحث في العقارات...",
+    "filters": "فلاتر",
+    "listView": "قائمة",
+    "mapView": "خريطة",
+    "all": "الكل",
+    "sale": "للبيع",
+    "rentLong": "للإيجار",
+    "allCities": "كل المدن",
+    "newest": "الأحدث",
+    "oldest": "الأقدم",
+    "priceAscShort": "سعر↑",
+    "priceDescShort": "سعر↓",
+    "priceAsc": "السعر: الأقل",
+    "priceDesc": "السعر: الأعلى",
+    "propertyType": "نوع العقار",
+    "priceRange": "نطاق السعر (ريال)",
+    "areaRange": "المساحة (م²)",
+    "from": "من",
+    "to": "إلى",
+    "bedrooms": "غرف النوم",
+    "any": "أي",
+    "features": "مزايا",
+    "furnished": "مفروش",
+    "elevator": "مصعد",
+    "water": "مياه",
+    "electricity": "كهرباء",
+    "clearAll": "مسح الكل",
+    "done": "تم",
+    "resultCount": "{count} نتيجة"
+  },
+  "listings": {
+    "loadError": "حدث خطأ في تحميل العقارات. يرجى المحاولة مرة أخرى.",
+    "geoError": "حدث خطأ في البحث الجغرافي.",
+    "retry": "إعادة المحاولة",
+    "noResultsTitle": "لا توجد نتائج",
+    "noResultsBody": "لم نجد عقارات تطابق بحثك. جرّب تغيير الفلاتر أو ابحث بكلمات مختلفة.",
+    "addListing": "إضافة إعلان"
+  },
+  "dailyRents": {
+    "title": "الإيجار اليومي",
+    "subtitle": "استأجر عقارك بشكل يومي"
+  },
+  "eventHalls": {
+    "title": "قاعات المناسبات والاحتفالات",
+    "subtitle": "احجز قاعتك المثالية للأعراس والمناسبات والاحتفالات"
   },
   "cta": {
     "title": "جاهز تبدأ؟",

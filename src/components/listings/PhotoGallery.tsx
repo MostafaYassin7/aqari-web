@@ -11,19 +11,27 @@ interface Props {
 
 const SWIPE_THRESHOLD = 40;
 
+function wrapIndex(index: number, count: number) {
+  return ((index % count) + count) % count;
+}
+
 export default function PhotoGallery({ photos, title }: Props) {
   const [current, setCurrent] = useState(0);
   const [lightbox, setLightbox] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<"prev" | "next" | null>(null);
   const touchStartX = useRef<number | null>(null);
   const didSwipe = useRef(false);
 
   const count = photos.length;
 
-  function go(idx: number) {
-    setCurrent(((idx % count) + count) % count);
+  function go(idx: number, direction?: "prev" | "next") {
+    const nextIndex = wrapIndex(idx, count);
+    if (nextIndex === current || count === 0) return;
+    setSlideDirection(direction ?? (nextIndex > current ? "next" : "prev"));
+    setCurrent(nextIndex);
   }
-  function prev() { go(current - 1); }
-  function next() { go(current + 1); }
+  function prev() { go(current - 1, "prev"); }
+  function next() { go(current + 1, "next"); }
 
   function handleTouchStart(e: React.TouchEvent) {
     touchStartX.current = e.touches[0].clientX;
@@ -45,6 +53,16 @@ export default function PhotoGallery({ photos, title }: Props) {
     didSwipe.current = false;
   }
 
+  const prevIndex = count > 0 ? wrapIndex(current - 1, count) : 0;
+  const nextIndex = count > 0 ? wrapIndex(current + 1, count) : 0;
+  const visibleSlides = count === 1
+    ? [{ index: current, slot: "current" as const }]
+    : [
+        { index: prevIndex, slot: "prev" as const },
+        { index: current, slot: "current" as const },
+        { index: nextIndex, slot: "next" as const },
+      ];
+
   if (count === 0) {
     return (
       <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
@@ -62,28 +80,33 @@ export default function PhotoGallery({ photos, title }: Props) {
         onTouchEnd={handleTouchEnd}
         onClick={handleMainClick}
       >
-        {/* Image strip — all images side-by-side, GPU-translated */}
         <div
-          className="flex h-full transition-transform duration-300 ease-out will-change-transform"
-          style={{
-            width: `${count * 100}%`,
-            transform: `translateX(${-(current * 100) / count}%)`,
-            direction: "ltr",
-          }}
+          key={current}
+          className={`relative h-full w-full motion-safe:animate-[gallery-slide_220ms_ease-out] ${
+            slideDirection === "prev" ? "[--slide-from:-18px]" : "[--slide-from:18px]"
+          }`}
         >
-          {photos.map((src, i) => (
+          {visibleSlides.map(({ index, slot }) => (
             <div
-              key={i}
-              className="relative h-full shrink-0"
-              style={{ width: `${100 / count}%` }}
+              key={`${slot}-${index}`}
+              className={`absolute inset-y-0 w-full ${
+                slot === "prev"
+                  ? "-translate-x-full"
+                  : slot === "next"
+                    ? "translate-x-full"
+                    : "translate-x-0"
+              }`}
+              aria-hidden={slot !== "current"}
             >
               <Image
-                src={src}
-                alt={`${title} - ${i + 1}`}
+                src={photos[index]}
+                alt={`${title} - ${index + 1}`}
                 fill
                 className="object-cover"
-                priority={i === 0}
-                unoptimized
+                priority={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+                sizes="100vw"
+                quality={78}
               />
             </div>
           ))}
@@ -160,7 +183,8 @@ export default function PhotoGallery({ photos, title }: Props) {
               alt={`${title} - ${current + 1}`}
               fill
               className="object-contain"
-              unoptimized
+              sizes="(min-width: 1024px) 896px, calc(100vw - 32px)"
+              quality={88}
             />
           </div>
 

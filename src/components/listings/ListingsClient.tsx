@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, lazy, Suspense } from "react";
+import { useTranslations } from "next-intl";
 import SearchFilters, { type FilterValues, defaultFilters } from "@/components/listings/SearchFilters";
 import ListingCard from "@/components/listings/ListingCard";
 import { ListingCardSkeleton } from "@/components/listings/ListingSkeleton";
@@ -13,16 +14,45 @@ const ListingsMap = lazy(() => import("@/components/map/ListingsMap"));
 
 const LIMIT = 12;
 
-interface Props {
-  forcedListingType?: string;
-  hideListingType?: boolean;
-  hrefBase?: string;
+function sortListings(listings: Listing[], sortBy: FilterValues["sortBy"]) {
+  if (!sortBy || sortBy === "newest") return listings;
+
+  const sorted = [...listings];
+  const price = (listing: Listing) => Number(listing.price ?? 0);
+  const createdAt = (listing: Listing) => {
+    const time = listing.createdAt ? new Date(listing.createdAt).getTime() : 0;
+    return Number.isFinite(time) ? time : 0;
+  };
+
+  if (sortBy === "oldest") sorted.sort((a, b) => createdAt(a) - createdAt(b));
+  if (sortBy === "price_asc") sorted.sort((a, b) => price(a) - price(b));
+  if (sortBy === "price_desc") sorted.sort((a, b) => price(b) - price(a));
+
+  return sorted;
 }
 
-export default function ListingsClient({ forcedListingType, hideListingType, hrefBase }: Props) {
+interface Props {
+  forcedListingType?: string;
+  forcedPropertyType?: string;
+  hideListingType?: boolean;
+  hidePropertyType?: boolean;
+  hrefBase?: string;
+  showAddButton?: boolean;
+}
+
+export default function ListingsClient({
+  forcedListingType,
+  forcedPropertyType,
+  hideListingType,
+  hidePropertyType,
+  hrefBase,
+  showAddButton = true,
+}: Props) {
+  const t = useTranslations("listings");
   const [filters, setFilters] = useState<FilterValues>({
     ...defaultFilters,
     listingType: forcedListingType ?? "",
+    propertyType: forcedPropertyType ?? "",
   });
   const [listings, setListings] = useState<Listing[]>([]);
   const [total, setTotal] = useState(0);
@@ -38,11 +68,12 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
       page: pg,
       limit: LIMIT,
     };
-    if (f.query) params.q = f.query;
+    if (f.query) params.query = f.query;
     if (f.city) params.city = f.city;
     if (forcedListingType) params.listingType = forcedListingType;
     else if (f.listingType) params.listingType = f.listingType;
-    if (f.propertyType) params.propertyType = f.propertyType;
+    if (forcedPropertyType) params.propertyType = forcedPropertyType;
+    else if (f.propertyType) params.propertyType = f.propertyType;
     if (f.priceFrom) params.priceFrom = f.priceFrom;
     if (f.priceTo) params.priceTo = f.priceTo;
     if (f.areaFrom) params.areaFrom = f.areaFrom;
@@ -52,30 +83,35 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
     if (f.hasElevator) params.hasElevator = true;
     if (f.hasWater) params.hasWater = true;
     if (f.hasElectricity) params.hasElectricity = true;
-    if (f.sortBy && f.sortBy !== "newest") params.sortBy = f.sortBy;
     return params;
-  }, [forcedListingType]);
+  }, [forcedListingType, forcedPropertyType]);
 
   const fetchListings = useCallback(async (currentPage = 1) => {
     setLoading(true);
     setError(null);
     try {
       const data = await searchListings(buildParams(filters, currentPage));
-      setListings(data.listings ?? []);
+      const nextListings = forcedListingType === "rent_short"
+        ? (data.listings ?? []).filter((listing) => listing.propertyType !== "event_hall")
+        : (data.listings ?? []);
+      setListings(sortListings(nextListings, filters.sortBy));
       setTotal(data.total ?? 0);
       setTotalPages(data.totalPages ?? 1);
       setPage(currentPage);
     } catch {
-      setError("حدث خطأ في تحميل العقارات. يرجى المحاولة مرة أخرى.");
+      setError(t("loadError"));
     } finally {
       setLoading(false);
     }
-  }, [filters, buildParams]);
+  }, [filters, buildParams, forcedListingType, t]);
 
   useEffect(() => {
-    fetchListings(1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timer = window.setTimeout(() => {
+      fetchListings(1);
+    }, 300);
+
+    return () => window.clearTimeout(timer);
+  }, [fetchListings]);
 
   async function handleGeoSearch(lat: number, lng: number) {
     setLoading(true);
@@ -85,7 +121,7 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
         latitude: lat,
         longitude: lng,
         listingType: (forcedListingType ?? filters.listingType) || undefined,
-        propertyType: filters.propertyType || undefined,
+        propertyType: (forcedPropertyType ?? filters.propertyType) || undefined,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const hits = (data.hits ?? []) as any[];
@@ -111,7 +147,7 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
       setTotal(data.total ?? mapped.length);
       setTotalPages(1);
     } catch {
-      setError("حدث خطأ في البحث الجغرافي.");
+      setError(t("geoError"));
     } finally {
       setLoading(false);
     }
@@ -128,12 +164,12 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
       <SearchFilters
         values={filters}
         onChange={setFilters}
-        onSearch={() => fetchListings(1)}
         resultCount={!loading ? total : undefined}
         loading={loading}
         view={view}
         onViewChange={setView}
         hideListingType={hideListingType}
+        hidePropertyType={hidePropertyType}
       />
 
       {/* Map view */}
@@ -144,7 +180,7 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
               <span className="animate-spin rounded-full h-8 w-8 border-2 border-[#F5A623] border-t-transparent" />
             </div>
           }>
-            <ListingsMap listings={listings} onSearchArea={handleGeoSearch} />
+            <ListingsMap listings={listings} onSearchArea={handleGeoSearch} hrefBase={hrefBase ?? "/listings"} />
           </Suspense>
         </div>
       )}
@@ -164,7 +200,7 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
                   onClick={() => fetchListings(page)}
                   className="px-6 py-2.5 bg-[#F5A623] text-white font-semibold rounded-xl text-sm hover:bg-[#E09400] transition-colors"
                 >
-                  إعادة المحاولة
+                  {t("retry")}
                 </button>
               </div>
             )}
@@ -178,9 +214,9 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
             {!loading && !error && listings.length === 0 && (
               <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
                 <span className="text-6xl">🏠</span>
-                <h3 className="text-xl font-bold text-[#222222]">لا توجد نتائج</h3>
+                <h3 className="text-xl font-bold text-[#222222]">{t("noResultsTitle")}</h3>
                 <p className="text-[#717171] max-w-sm">
-                  لم نجد عقارات تطابق بحثك. جرّب تغيير الفلاتر أو ابحث بكلمات مختلفة.
+                  {t("noResultsBody")}
                 </p>
               </div>
             )}
@@ -236,14 +272,17 @@ export default function ListingsClient({ forcedListingType, hideListingType, hre
       )}
 
       {/* Floating add listing button */}
-      <Link
-        href="/add-listing"
-        className="fixed bottom-6 end-5 z-40 flex items-center gap-2 bg-[#F5A623] hover:bg-[#E09400] text-white font-bold px-5 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all active:scale-95"
+      {showAddButton && (
+        <Link
+          href="/add-listing"
+          className="fixed bottom-6 end-5 z-40 flex items-center gap-2 bg-[#F5A623] hover:bg-[#E09400] text-white font-bold px-5 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all active:scale-95"
         aria-label="إضافة إعلان"
+        title={t("addListing")}
       >
         <Plus size={20} strokeWidth={2.5} />
-        <span className="text-sm">إضافة إعلان</span>
+        <span className="text-sm">{t("addListing")}</span>
       </Link>
+      )}
     </>
   );
 }

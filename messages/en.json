@@ -1,6 +1,9 @@
 {
   "nav": {
     "home": "Home",
+    "listings": "Properties",
+    "dailyRents": "Daily Rents",
+    "eventHalls": "Event Halls",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "about": "About Us",
@@ -10,7 +13,13 @@
     "myAds": "My Ads",
     "favorites": "Favorites",
     "wallet": "Wallet",
+    "bookings": "Bookings",
     "chat": "Messages",
+    "profile": "Profile",
+    "account": "Account",
+    "dashboard": "Dashboard",
+    "addListing": "Add listing",
+    "add": "Add",
     "logout": "Sign Out"
   },
   "hero": {
@@ -76,6 +85,53 @@
   "screenshots": {
     "title": "Professional & Easy to Use",
     "subtitle": "An elegant Arabic interface designed specifically for the Saudi market"
+  },
+  "searchFilters": {
+    "searchPlaceholder": "Search properties...",
+    "filters": "Filters",
+    "listView": "List",
+    "mapView": "Map",
+    "all": "All",
+    "sale": "For sale",
+    "rentLong": "For rent",
+    "allCities": "All cities",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "priceAscShort": "Price ↑",
+    "priceDescShort": "Price ↓",
+    "priceAsc": "Price: low to high",
+    "priceDesc": "Price: high to low",
+    "propertyType": "Property type",
+    "priceRange": "Price range (SAR)",
+    "areaRange": "Area (m²)",
+    "from": "From",
+    "to": "To",
+    "bedrooms": "Bedrooms",
+    "any": "Any",
+    "features": "Features",
+    "furnished": "Furnished",
+    "elevator": "Elevator",
+    "water": "Water",
+    "electricity": "Electricity",
+    "clearAll": "Clear all",
+    "done": "Done",
+    "resultCount": "{count} results"
+  },
+  "listings": {
+    "loadError": "Could not load properties. Please try again.",
+    "geoError": "Could not run map search.",
+    "retry": "Try again",
+    "noResultsTitle": "No results",
+    "noResultsBody": "We couldn't find properties matching your search. Try changing the filters or using different keywords.",
+    "addListing": "Add listing"
+  },
+  "dailyRents": {
+    "title": "Daily rents",
+    "subtitle": "Book short-stay properties by the day"
+  },
+  "eventHalls": {
+    "title": "Event halls and venues",
+    "subtitle": "Book the right venue for weddings, events, and celebrations"
   },
   "cta": {
     "title": "Ready to Start?",
